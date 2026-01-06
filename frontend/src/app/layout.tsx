@@ -23,10 +23,10 @@ const monoFont = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sigma Arena - AI Trading Agents",
-  description: "Sigma Arena: Automated trading platform that mirrors top AI trading agents from Nof1.ai Alpha Arena on Hyperliquid. Real-time position tracking, risk management, and transparent performance metrics. Trade like DeepSeek V3.1, Qwen3 Max, and Grok 4 with configurable leverage and automated reconciliation.",
+  title: "CryptoSky Elite - AI Trading Agents",
+  description: "CryptoSky Elite: Automated trading platform that mirrors top AI trading agents from Nof1.ai Alpha Arena on Hyperliquid. Real-time position tracking, risk management, and transparent performance metrics. Trade like DeepSeek V3.1, Qwen3 Max, and Grok 4 with configurable leverage and automated reconciliation.",
   keywords: [
-    "Sigma Arena",
+    "CryptoSky Elite",
     "copy trading",
     "crypto trading bot",
     "AI trading",
@@ -47,16 +47,16 @@ export const metadata: Metadata = {
   creator: "Gajesh Naik",
   publisher: "Gajesh Naik",
   openGraph: {
-    title: "Sigma Arena - AI Trading Agents",
-    description: "Automated trading platform mirroring top AI agents from Nof1.ai Alpha Arena. Real-time tracking, risk controls, and transparent metrics on Hyperliquid.",
+    title: "CryptoSky Elite - AI Trading Agents",
+    description: "Automated trading platform mirroring elite traders on hyperliquid.xyz Real-time tracking, risk controls, and transparent metrics on Hyperliquid.",
     type: "website",
     locale: "en_US",
-    siteName: "Sigma Arena",
+    siteName: "CryptoSky Elite",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sigma Arena - AI Trading Agents",
-    description: "Mirror top AI trading agents from Nof1.ai on Hyperliquid. DeepSeek V3.1, Qwen3 Max, Grok 4 with automated risk management.",
+    title: "CryptoSky Elite - AI Trading Agents",
+    description: "Mirror elite traders and vaults on Hyperliquid. DeepSeek V3.1, Qwen3 Max, Grok 4 with automated risk management.",
   },
   robots: {
     index: true,
