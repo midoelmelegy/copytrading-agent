@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="pixel-heading mb-3 text-sm">[SIGMA] Arena</h3>
+            <h3 className="pixel-heading mb-3 text-sm">[CRYPTOSKY] Elite</h3>
             <p className="font-mono text-xs text-muted-foreground leading-relaxed">
               Automated copy trading agent that mirrors leader positions with configurable risk controls.
             </p>

@@ -11,7 +11,7 @@ export function Header() {
   const pathname = usePathname();
   return (
     <header className="mb-4 border-b border-[var(--outline)] py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-      <Link href="/" className="pixel-heading text-lg font-bold leading-none">[SIGMA] Arena</Link>
+      <Link href="/" className="pixel-heading text-lg font-bold leading-none">[CRYPTOSKY] Elite</Link>
       <nav className="pixel-label hidden md:flex items-center gap-2">
         <Link
           href="/"
