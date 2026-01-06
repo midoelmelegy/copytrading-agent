@@ -112,7 +112,7 @@ function generatePnlImage(params: {
   drawFittedText(params.appName.toUpperCase(), pad + 28, pad + 48, width - pad * 2 - 56, 32, 18, "#e5e7eb", "bold");
   ctx.fillStyle = "#a1a1aa";
   setFont(14);
-  drawFittedText("Track and deposit at SigmaArena.com", pad + 28, pad + 68, width - pad * 2 - 56, 14, 12, "#a1a1aa");
+  drawFittedText("Track and deposit at cryptosky.org", pad + 28, pad + 68, width - pad * 2 - 56, 14, 12, "#a1a1aa");
   ctx.fillStyle = "#e5e7eb";
   setFont(26);
   drawFittedText(params.vaultName || `${shortAddress(params.vaultAddress)}`, pad + 28, pad + 98, width - pad * 2 - 56, 26, 14, "#e5e7eb");
@@ -219,7 +219,7 @@ export function DepositorsCard({ vaultAddress }: { vaultAddress: `0x${string}` }
   useEffect(() => {
     if (!shareFor) return;
     const url = generatePnlImage({
-      appName: "sigmaarena.com",
+      appName: "cryptosky.org",
       vaultName: vaultName || shortAddress(vaultAddress),
       user: shareFor.user,
       equity: shareFor.equity,
@@ -311,7 +311,7 @@ export function DepositorsCard({ vaultAddress }: { vaultAddress: `0x${string}` }
         <DialogHeader>
           <DialogTitle className="pixel-heading text-lg">Share Your Performance</DialogTitle>
           <DialogDescription className="font-mono text-xs text-muted-foreground">
-            Image preview includes {vaultName || shortAddress(vaultAddress)} and sigmaarena.com
+            Image preview includes {vaultName || shortAddress(vaultAddress)} and cryptosky.org
           </DialogDescription>
         </DialogHeader>
         {shareFor && (
@@ -345,7 +345,7 @@ export function DepositorsCard({ vaultAddress }: { vaultAddress: `0x${string}` }
                   if (!shareFor) return;
                   const text = `I just hit ${shareFor.roiPct >= 0 ? "+" : ""}${shareFor.roiPct.toFixed(2)}% ROI by copytrading ${vaultName || "this vault"} on SigmaArena`;
                   const url = generatePnlImage({
-                    appName: "sigmaarena.com",
+                    appName: "cryptosky.org",
                     vaultName: vaultName || shortAddress(vaultAddress),
                     user: shareFor.user,
                     equity: shareFor.equity,
@@ -366,7 +366,7 @@ export function DepositorsCard({ vaultAddress }: { vaultAddress: `0x${string}` }
                 onClick={() => {
                   if (!shareFor) return;
                   const url = generatePnlImage({
-                    appName: "sigmaarena.com",
+                    appName: "cryptosky.org",
                     vaultName: vaultName || shortAddress(vaultAddress),
                     user: shareFor.user,
                     equity: shareFor.equity,
