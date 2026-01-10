@@ -54,65 +54,6 @@ export async function GET(req: NextRequest) {
     // Fetch positions for all vaults in parallel
     const promises = vaultAddresses.map(async (vaultAddress) => {
       try {
-        // FIRST: Try HLP endpoint for HLP vaults
-        let positions: any[] = [];
-        
-        // Try hlpDetails first (for HLP)
-        const hlpResponse = await fetch("https://api.hyperliquid.xyz/info", {
-          method: "POST",
-          cache: "no-store",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "hlpDetails",
-            user: vaultAddress.trim(),
-          }),
-        });
-
-        if (hlpResponse.ok) {
-          const hlpData = await hlpResponse.json();
-          
-          // Check if this is HLP data (has openPositions array)
-          if (hlpData && Array.isArray(hlpData.openPositions)) {
-            console.log(`HLP vault detected: ${vaultAddress}`);
-            
-            // Parse HLP positions
-            positions = hlpData.openPositions.map((pos: any) => {
-              const coin = pos.coin;
-              const rawSize = parseFloat(pos.szi || "0");
-              const size = Math.abs(rawSize);
-              const entryPrice = parseFloat(pos.entryPx || "0");
-              const unrealizedPnl = parseFloat(pos.unrealizedPnl || "0");
-              
-              // Get mark price
-              let markPrice = priceMap[coin];
-              if (!markPrice && size !== 0 && entryPrice > 0) {
-                markPrice = (unrealizedPnl / size) + entryPrice;
-              }
-              if (!markPrice) {
-                markPrice = entryPrice;
-              }
-              
-              // Get leverage from HLP data
-              const leverageValue = pos.leverage?.value ? parseFloat(pos.leverage.value) : 0;
-              
-              return {
-                coin,
-                size,
-                entryPrice,
-                markPrice,
-                leverage: leverageValue,
-                unrealizedPnl,
-                marginUsed: parseFloat(pos.marginUsed || "0"),
-                side: rawSize > 0 ? "LONG" : "SHORT"
-              };
-            });
-            
-            console.log(`HLP vault ${vaultAddress}: Found ${positions.length} positions`);
-            return { vaultAddress, positions };
-          }
-        }
-        
-        // If not HLP, try regular endpoint
         const response = await fetch("https://api.hyperliquid.xyz/info", {
           method: "POST",
           cache: "no-store",
@@ -131,7 +72,7 @@ export async function GET(req: NextRequest) {
         }
 
         const data = await response.json();
-        positions = (data.assetPositions || []).map((pos: unknown) => {
+        const positions = (data.assetPositions || []).map((pos: unknown) => {
           const position = pos as { 
             position: { 
               coin: string; 
@@ -148,6 +89,8 @@ export async function GET(req: NextRequest) {
           const unrealizedPnl = parseFloat(position.position.unrealizedPnl || "0");
           
           // Calculate mark price from unrealized PNL if available
+          // unrealizedPnl = (markPrice - entryPrice) * size
+          // So: markPrice = (unrealizedPnl / size) + entryPrice
           let markPrice = priceMap[coin];
           if (!markPrice && size !== 0 && entryPx > 0) {
             markPrice = (unrealizedPnl / size) + entryPx;
@@ -164,11 +107,9 @@ export async function GET(req: NextRequest) {
             leverage: parseFloat(position.position.leverage?.value || "0"),
             unrealizedPnl,
             marginUsed: parseFloat(position.position.marginUsed || "0"),
-            side: size > 0 ? "LONG" : "SHORT"
           };
         });
 
-        console.log(`Regular vault ${vaultAddress}: Found ${positions.length} positions`);
         return { vaultAddress, positions };
       } catch (err) {
         console.error(`Error fetching positions for ${vaultAddress}:`, err);
@@ -196,3 +137,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
