@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const vaultAddress = searchParams.get("vault") || "0xdfc24b077bc1425ad1dea75bcb6f8158e10a304c";
+  const vaultAddress = searchParams.get("vault") || "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303";
 
   try {
     console.log(`Testing HLP endpoints for vault: ${vaultAddress}`);
