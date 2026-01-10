@@ -1,5 +1,60 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Interfaces for HLP data
+interface HLPPosition {
+  coin: string;
+  szi: string;
+  entryPx: string;
+  leverage: {
+    type: string;
+    value: string;
+  };
+  positionValue: string;
+  unrealizedPnl: string;
+  returnOnEquity: string;
+  liquidationPx: string | null;
+  marginUsed: string;
+}
+
+interface HLPData {
+  address: string;
+  totalEquity: string;
+  freeCollateral: string;
+  totalLockedCollateral: string;
+  hlpAssets: Record<string, unknown>;
+  openPositions: HLPPosition[];
+}
+
+interface RegularPosition {
+  position: {
+    coin: string;
+    entryPx?: string;
+    szi: string;
+    unrealizedPnl?: string;
+    leverage?: { value?: string };
+    marginUsed?: string;
+  };
+}
+
+interface MarginSummary {
+  accountValue: string;
+  totalNtlPos: string;
+  totalRawUsd: string;
+  totalMarginUsed: string;
+}
+
+interface RegularResponseData {
+  marginSummary?: MarginSummary;
+  assetPositions?: RegularPosition[];
+  withdrawable?: string;
+}
+
+interface TransformedResponseData {
+  marginSummary: MarginSummary;
+  assetPositions: RegularPosition[];
+  withdrawable: string;
+}
+
 // Fetch vault data from Hyperliquid Info API
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -16,7 +71,7 @@ export async function GET(req: NextRequest) {
     // Check if this is the HLP vault
     const isHLP = trimmedAddress === "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303";
     
-    let responseData: any;
+    let responseData: TransformedResponseData;
     let endpointType: string;
     
     if (isHLP) {
@@ -41,7 +96,7 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      const hlpData = await hlpResponse.json();
+      const hlpData: HLPData = await hlpResponse.json();
       
       // Transform HLP data to match clearinghouseState format
       responseData = {
@@ -52,14 +107,14 @@ export async function GET(req: NextRequest) {
           totalMarginUsed: hlpData.totalLockedCollateral || "0"
         },
         // Map HLP openPositions to assetPositions format
-        assetPositions: (hlpData.openPositions || []).map((pos: any) => ({
+        assetPositions: (hlpData.openPositions || []).map((pos: HLPPosition) => ({
           position: {
             coin: pos.coin,
             szi: pos.szi,
             entryPx: pos.entryPx,
             unrealizedPnl: pos.unrealizedPnl,
             leverage: pos.leverage,
-            liquidationPx: pos.liquidationPx,
+            liquidationPx: pos.liquidationPx || "",
             marginUsed: pos.marginUsed
           }
         })),
@@ -88,18 +143,30 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      responseData = await stateResponse.json();
+      const regularData: RegularResponseData = await stateResponse.json();
+      
+      // Ensure all required fields exist
+      responseData = {
+        marginSummary: regularData.marginSummary || {
+          accountValue: "0",
+          totalNtlPos: "0.0",
+          totalRawUsd: "0",
+          totalMarginUsed: "0"
+        },
+        assetPositions: regularData.assetPositions || [],
+        withdrawable: regularData.withdrawable || "0"
+      };
     }
 
     // Extract equity value
-    const equity = responseData.marginSummary?.accountValue 
+    const equity = responseData.marginSummary.accountValue 
       ? parseFloat(responseData.marginSummary.accountValue) 
       : 0;
 
     // Calculate total unrealized PNL from all positions
     let totalPnl = 0;
     if (responseData.assetPositions && Array.isArray(responseData.assetPositions)) {
-      totalPnl = responseData.assetPositions.reduce((sum: number, pos: any) => {
+      totalPnl = responseData.assetPositions.reduce((sum: number, pos: RegularPosition) => {
         const position = pos.position || pos;
         const unrealizedPnl = parseFloat(position.unrealizedPnl || "0");
         return sum + unrealizedPnl;
@@ -107,7 +174,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Extract total account value and withdrawable
-    const accountValue = parseFloat(responseData.marginSummary?.accountValue || "0");
+    const accountValue = parseFloat(responseData.marginSummary.accountValue || "0");
     const withdrawable = parseFloat(responseData.withdrawable || "0");
 
     return NextResponse.json(
@@ -130,7 +197,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Failed to fetch Hyperliquid data:", error);
     return NextResponse.json(
-      { error: "Failed to fetch vault data", details: String(error) },
+      { error: "Failed to fetch vault data", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
