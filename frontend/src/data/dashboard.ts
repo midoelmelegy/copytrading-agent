@@ -62,8 +62,8 @@ export const VAULT_AGENTS: VaultAgentSummary[] = [
     name: "Grok 4",
     model: "Grok 4",
     modelId: "grok-4",
-    vaultAddress: "0xd3e4cd447dc6657716b56ac11f38825fa8cd60ac",
-    leaderAddress: "0x56d652e62998251b56c8398fb11fcfe464c08f84",
+    vaultAddress: "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+    leaderAddress: "0x677d831aef5328190852e24f13c46cac05f984e7",
     logsUrl: "https://userapi-compute.eigencloud.xyz/logs/0x9abb8630488a02Ec3410C26785f661fa49218140",
     dashboardUrl: "https://nof1.ai/models/grok-4",
     risk_snapshot: {
